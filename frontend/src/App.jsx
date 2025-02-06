@@ -3,12 +3,12 @@ import "./App.css";
 import axios from "axios";
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [requestNumber, setRequestNumber] = useState(1);
+  const [count, setCount] = useState(1); // count to persist data
+  const [requestNumber, setRequestNumber] = useState(1); // requested no by default 1
   const [userData, setUserData] = useState([]);
   const [statusList, setStatusList] = useState([]);
   const [isAutomated, setIsAutomated] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // set error message if request in more in given time
 
   const handleInput = (input) => {
     setRequestNumber(Number(input.target.value));
@@ -22,7 +22,6 @@ function App() {
       return;
     }
     setCount(0); // Reset count before sending new requests
-
     fetchUserData();
   };
 
@@ -40,7 +39,7 @@ function App() {
         statuses.push(response.status);
 
         setCount((prev) => prev + 1);
-        // Store the request count in session storage for persistence
+
         sessionStorage.setItem("requestCount", count);
         // const requestCount = parseInt(sessionStorage.getItem("requestCount"));
       }
@@ -62,6 +61,7 @@ function App() {
       setUserData([]);
       setStatusList([]);
       alert("Too many requests sent , please try again after 15 mins");
+      setRequestNumber(1);
     }
   };
 
@@ -104,9 +104,7 @@ function App() {
       </button>
 
       {errorMessage && (
-        <div style={{ color: "red", marginTop: "10px", fontWeight: "bold" }}>
-          {errorMessage}
-        </div>
+        <div style={{ color: "red", marginTop: "10px" }}>{errorMessage}</div>
       )}
 
       <div>
