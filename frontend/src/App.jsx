@@ -8,6 +8,7 @@ function App() {
   const [userData, setUserData] = useState([]);
   const [statusList, setStatusList] = useState([]);
   const [isAutomated, setIsAutomated] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleInput = (input) => {
     setRequestNumber(Number(input.target.value));
@@ -49,15 +50,25 @@ function App() {
       console.error("Error sending requests", err);
       // setStatusList(response.status);
       // console.log("status", statusList);
-      alert("Too many requests sent , please try again after 15 mins");
+      if (err.response && err.response.status === 429) {
+        setErrorMessage(
+          "Too many requests! Please wait 15 minutes before trying again."
+        );
+      } else {
+        setErrorMessage("An error occurred while fetching data.");
+      }
+
       setCount(0);
       setUserData([]);
+      setStatusList([]);
+      alert("Too many requests sent , please try again after 15 mins");
     }
   };
 
   useEffect(() => {
     if (isAutomated) {
       setCount(0);
+      setErrorMessage("");
       fetchUserData();
       setIsAutomated(false);
     }
@@ -91,6 +102,12 @@ function App() {
       <button type="button" onClick={automateRequest} disabled={isAutomated}>
         {isAutomated ? "Automated Running..." : "Automate Request"}
       </button>
+
+      {errorMessage && (
+        <div style={{ color: "red", marginTop: "10px", fontWeight: "bold" }}>
+          {errorMessage}
+        </div>
+      )}
 
       <div>
         <h3>Status Codes:</h3>
